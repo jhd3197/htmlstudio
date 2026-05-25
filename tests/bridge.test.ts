@@ -20,6 +20,35 @@ describe('buildBridgeScript', () => {
   });
 });
 
+describe('buildBridgeScript — v0.2 additions', () => {
+  it('embeds the BLOCK_ATTR constant for block awareness', () => {
+    const out = buildBridgeScript();
+    expect(out).toContain('"data-ve-block"');
+  });
+
+  it('exposes multi-select styling class', () => {
+    const out = buildBridgeScript();
+    expect(out).toContain('data-ve-multi');
+  });
+
+  it('handles host-side query messages', () => {
+    const out = buildBridgeScript();
+    expect(out).toContain("msg.type === 'query'");
+    expect(out).toContain("'query-result'");
+  });
+
+  it('handles shift-click for multi-select', () => {
+    const out = buildBridgeScript();
+    expect(out).toContain('e.shiftKey');
+    expect(out).toContain("'select-multi'");
+  });
+
+  it('handles Escape to clear selection', () => {
+    const out = buildBridgeScript();
+    expect(out).toContain("e.key !== 'Escape'");
+  });
+});
+
 describe('injectBridge', () => {
   it('inserts before </body>', () => {
     const out = injectBridge('<!doctype html><html><body><p>hi</p></body></html>');
