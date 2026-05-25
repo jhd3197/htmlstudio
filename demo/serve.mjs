@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Tiny dev server for the visual-edit-core demo.
+// Tiny dev server for the htmlstudio demo.
 // Run: npm run demo   →  http://127.0.0.1:5180
 
 import http from 'node:http';
@@ -57,5 +57,5 @@ function readBody(req) {
 }
 
 server.listen(PORT, '127.0.0.1', () => {
-  console.log(`visual-edit-core demo → http://127.0.0.1:${PORT}`);
+  console.log(`htmlstudio demo → http://127.0.0.1:${PORT}`);
 });

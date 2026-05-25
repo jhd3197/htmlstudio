@@ -1,8 +1,8 @@
-# visual-edit-core
+# htmlstudio
 
 > HTML-source-of-truth visual editor primitives. A small, framework-agnostic alternative to GrapesJS — built for AI-generated sites where the HTML the model emits **is** the source.
 
-[![CI](https://github.com/jhd3197/visual-edit-core/actions/workflows/ci.yml/badge.svg)](https://github.com/jhd3197/visual-edit-core/actions/workflows/ci.yml)
+[![CI](https://github.com/jhd3197/htmlstudio/actions/workflows/ci.yml/badge.svg)](https://github.com/jhd3197/htmlstudio/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Why
@@ -44,13 +44,13 @@ Three primitives, ~400 LOC of source:
 ## Install
 
 ```bash
-npm install visual-edit-core
+npm install htmlstudio
 ```
 
 ## Quick start
 
 ```ts
-import { tagHtml, injectBridge, applyPatch } from 'visual-edit-core';
+import { tagHtml, injectBridge, applyPatch } from 'htmlstudio';
 
 const raw = '<section><h1>Hello</h1><p>world</p></section>';
 const tagged = tagHtml(raw);
@@ -127,11 +127,11 @@ All of them define a proprietary scene graph. That's fine when humans author fro
 - **Source = HTML.** No schema migrations, no lossy import/export.
 - **AI-native.** Every patch maps 1:1 to an LLM tool-call. The model can edit through the same surface a human does.
 - **Tiny.** One runtime dep (`node-html-parser`). Bridge script is ~3 KB unminified.
-- **Framework-agnostic.** The core is pure TS. Adapters (`visual-edit-react`, `visual-edit-vue`) live in separate packages.
+- **Framework-agnostic.** The core is pure TS. Adapters (`htmlstudio-react`, `htmlstudio-vue`) live in separate packages.
 
 ## Roadmap
 
-- `visual-edit-react` — `<VisualEditor source onChange />` + inspector components.
+- `htmlstudio-react` — `<HtmlStudio source onChange />` + inspector components.
 - Block/component registry via `data-ve-block="hero"`.
 - Undo/redo stack helper.
 - Style-token patches (`set-token`) for design-system-aware editing.

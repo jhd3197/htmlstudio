@@ -1,5 +1,5 @@
 {
-  "name": "visual-edit-core",
+  "name": "htmlstudio",
   "version": "0.1.0",
   "description": "HTML-source-of-truth visual editor primitives: tag, bridge, patch. Framework-agnostic alternative to GrapesJS for AI-generated sites.",
   "type": "module",
