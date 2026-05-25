@@ -11,3 +11,20 @@ export {
   getTree,
   type ElementNode,
 } from './query.js';
+export {
+  BUILTIN_BLOCKS,
+  BUILTIN_REGISTRY,
+  BLOCK_INSTANCE_ATTR,
+  BLOCK_CONFIG_ATTR,
+  BLOCK_FIELD_ATTR,
+  renderBlock,
+  renderBlockUpdate,
+  readBlockConfig,
+  createRegistry,
+  type BlockDefinition,
+  type BlockField,
+  type BlockFieldOption,
+  type BlockFieldType,
+  type BlockCategory,
+  type BlockRegistry,
+} from './blocks.js';
