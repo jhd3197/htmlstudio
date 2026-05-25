@@ -1,13 +1,15 @@
 # htmlstudio
 
-> HTML-source-of-truth visual editor primitives. A small, framework-agnostic alternative to GrapesJS — built for AI-generated sites where the HTML the model emits **is** the source.
+> HTML-source-of-truth visual editor primitives. Built to power [AgentSite](https://github.com/jhd3197/AgentSite) — the "edit after the agent ships it" layer for AI-generated websites.
 
 [![CI](https://github.com/jhd3197/htmlstudio/actions/workflows/ci.yml/badge.svg)](https://github.com/jhd3197/htmlstudio/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## Why
 
-GrapesJS asks you to translate your HTML into its proprietary component-JSON tree. Importing AI-generated markup is lossy; round-tripping back to clean HTML is worse. Here, the HTML string stays canonical. Every visual edit is a tiny, typed patch on that string — the same shape an LLM tool-call would emit.
+AgentSite's PM → Designer → Developer → Reviewer pipeline produces real HTML/CSS/JS files. Once they're generated, users want to nudge them — change a headline, swap an image, tweak a color — without spinning the whole agent loop back up. htmlstudio is that nudge layer. The HTML the agents emit stays the source of truth; every visual edit is a tiny, typed patch on that string — the same shape an LLM tool-call would emit, so the agents and the human edit through the same channel.
+
+Light inspiration from GrapesJS (the inspector-panel mental model) and open-design's `edit-mode` bridge (source-mapped `data-*` ids + `postMessage` round-trip), but htmlstudio is intentionally small and scoped — no scene graph, no plugin runtime, no block library to maintain. Just the three primitives AgentSite needs.
 
 Three primitives, ~400 LOC of source:
 
@@ -120,14 +122,12 @@ npm run test:watch
 npm run dev           # tsc --watch
 ```
 
-## Why not GrapesJS / Webflow / Builder.io
+## Design principles
 
-All of them define a proprietary scene graph. That's fine when humans author from scratch — terrible when the source of truth is AI output that needs to round-trip cleanly. Here:
-
-- **Source = HTML.** No schema migrations, no lossy import/export.
-- **AI-native.** Every patch maps 1:1 to an LLM tool-call. The model can edit through the same surface a human does.
-- **Tiny.** One runtime dep (`node-html-parser`). Bridge script is ~3 KB unminified.
-- **Framework-agnostic.** The core is pure TS. Adapters (`htmlstudio-react`, `htmlstudio-vue`) live in separate packages.
+- **Source = HTML.** No proprietary scene graph, no schema migrations, no lossy import/export. The string the agent writes is the string the editor mutates.
+- **Agent-native.** Every patch maps 1:1 to an LLM tool-call, so AgentSite's agents and a human user edit through the exact same surface.
+- **Tiny and boring.** One runtime dep (`node-html-parser`). Bridge script is ~3 KB unminified. Pure TS core.
+- **Not a website builder.** It's a primitives layer. AgentSite owns the surfaces (chat, pipeline, generation); htmlstudio owns "click a thing → change a thing → patch the source."
 
 ## Roadmap
 

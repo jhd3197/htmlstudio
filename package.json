@@ -1,7 +1,7 @@
 {
   "name": "htmlstudio",
   "version": "0.1.0",
-  "description": "HTML-source-of-truth visual editor primitives: tag, bridge, patch. Framework-agnostic alternative to GrapesJS for AI-generated sites.",
+  "description": "HTML-source-of-truth visual editor primitives (tag, bridge, patch) — the post-generation edit layer for AgentSite and other AI website builders.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -46,11 +46,12 @@
     "html",
     "wysiwyg",
     "ai",
-    "website-builder",
-    "grapesjs",
-    "grapesjs-alternative",
+    "agentsite",
+    "ai-website-builder",
     "iframe",
-    "live-edit"
+    "live-edit",
+    "postmessage",
+    "contenteditable"
   ],
   "author": "Juan Denis",
   "license": "MIT",
