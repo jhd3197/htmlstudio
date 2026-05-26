@@ -16,6 +16,12 @@ import {
   type BlockDefinition,
   type Patch,
 } from 'htmlstudio';
+import {
+  formatSelectionContext,
+  TWEAK_SYSTEM_PROMPT,
+  REBUILD_SYSTEM_PROMPT,
+  PATCH_TOOL_NAME,
+} from 'htmlstudio/agent';
 import { SAMPLE_HTML } from './sample.js';
 
 const STORAGE_KEY = 'htmlstudio:demo:source';
@@ -58,10 +64,22 @@ export function App() {
         content: text,
         time: nowTime(),
       };
-      const replyBody =
-        chatMode === 'tweak'
-          ? `Tweak mode would emit a Patch here — e.g. { kind: "set-text", id: "${visual.selection?.id ?? '<select an element>'}", value: "..." } — and the host applies it via htmlstudio's applyPatch. Wire onSend to your LLM to produce that JSON.`
-          : `Re-build mode would call your generation pipeline (e.g. AgentSite's PM → Designer → Developer) to produce a new full HTML source, then apply it with { kind: "set-full-source", source: "<!doctype html>..." }.`;
+      const systemPrompt =
+        chatMode === 'tweak' ? TWEAK_SYSTEM_PROMPT : REBUILD_SYSTEM_PROMPT;
+      const selectionCtx = formatSelectionContext(visual.selection);
+      const replyBody = [
+        `(demo stub — no LLM wired up.)`,
+        ``,
+        `In your own app, this onSend handler would call your LLM with:`,
+        `  • tool: ${PATCH_TOOL_NAME} (from htmlstudio/agent → PROVIDER_TOOL_SPECS)`,
+        `  • system: ${systemPrompt.slice(0, 80)}…`,
+        `  • user: "${text}"`,
+        ``,
+        selectionCtx,
+        ``,
+        `The LLM returns a Patch via the tool call; you validate it with`,
+        `validatePatch(...) and apply it via visualEdit.applyPatch(patch).`,
+      ].join('\n');
       const reply: ChatMessage = {
         id: `a-${Date.now()}`,
         role: 'assistant',
