@@ -17,11 +17,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-      # `npm install` rather than `npm ci`: the committed lockfile is
-      # generated on Windows and only lists Windows-platform rollup binaries
-      # as optional deps. `npm ci` strictly follows the lockfile and won't
-      # fetch the Linux binary the runner actually needs. See
+      # The committed lockfile is generated on Windows and pins win32-only
+      # rollup optional deps. Even `npm install` respects those entries, so
+      # we delete the lockfile to force a fresh resolve on the Linux runner
+      # — exactly what the npm bug's own error message recommends. See
       # https://github.com/npm/cli/issues/4828.
+      - run: rm -f package-lock.json
       - run: npm install --no-audit --no-fund
       - run: npm run build
       - run: npm test

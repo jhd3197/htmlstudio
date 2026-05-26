@@ -26,15 +26,20 @@ jobs:
           cache: npm
 
       - name: Install (root)
-        # `npm install`, not `npm ci` — Windows-generated lockfile omits
-        # the Linux rollup binary. See https://github.com/npm/cli/issues/4828.
-        run: npm install --no-audit --no-fund
+        # Lockfiles are Windows-generated and pin win32-only rollup deps;
+        # delete them so npm resolves Linux binaries fresh on this runner.
+        # https://github.com/npm/cli/issues/4828.
+        run: |
+          rm -f package-lock.json
+          npm install --no-audit --no-fund
 
       - name: Build htmlstudio
         run: npm run build
 
       - name: Install (demo)
-        run: npm --prefix demo install --no-audit --no-fund
+        run: |
+          rm -f demo/package-lock.json
+          npm --prefix demo install --no-audit --no-fund
 
       - name: Build demo
         env:
