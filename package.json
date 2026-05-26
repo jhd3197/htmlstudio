@@ -30,22 +30,58 @@
     "./blocks": {
       "types": "./dist/blocks.d.ts",
       "import": "./dist/blocks.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@phosphor-icons/react": "^2.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "@phosphor-icons/react": {
+      "optional": true
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "npm run build:ts && npm run build:css",
+    "build:ts": "tsc -p tsconfig.json",
+    "build:css": "sass src/react/styles/htmlstudio.scss dist/styles.css --no-source-map --style=compressed",
     "dev": "tsc -p tsconfig.json --watch",
+    "dev:css": "sass --watch src/react/styles/htmlstudio.scss dist/styles.css",
     "test": "vitest run",
     "test:watch": "vitest",
-    "demo": "node demo/serve.mjs",
+    "demo": "npm --prefix demo run dev",
+    "demo:install": "npm --prefix demo install",
+    "demo:build": "npm --prefix demo run build",
     "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
     "node-html-parser": "^6.1.13"
   },
   "devDependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "@types/node": "^20.11.0",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "sass": "^1.99.0",
     "typescript": "^5.4.0",
     "vitest": "^1.6.0"
   },

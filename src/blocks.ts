@@ -200,6 +200,16 @@ export function createRegistry(defs: BlockDefinition[]): BlockRegistry {
   };
 }
 
+/** Look up a built-in block by id. Returns undefined when not found. */
+export function getBlock(id: string): BlockDefinition | undefined {
+  return BUILTIN_REGISTRY.get(id);
+}
+
+/** List all built-in blocks. */
+export function listBlocks(): BlockDefinition[] {
+  return BUILTIN_BLOCKS;
+}
+
 /* ----------------------------- starter blocks ------------------------ */
 
 /* ----------------------------- wireframes ---------------------------- */
