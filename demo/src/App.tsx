@@ -6,6 +6,8 @@ import {
   DeviceSwitcher,
   ZoomControls,
   RightRail,
+  ChatSidebar,
+  type ChatMessage,
 } from 'htmlstudio/react';
 import {
   BUILTIN_BLOCKS,
@@ -17,6 +19,22 @@ import {
 import { SAMPLE_HTML } from './sample.js';
 
 const STORAGE_KEY = 'htmlstudio:demo:source';
+const CHAT_KEY = 'htmlstudio:demo:chat';
+
+function nowTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function loadChat(): ChatMessage[] {
+  try {
+    const raw = localStorage.getItem(CHAT_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
 export function App() {
   const [editMode, setEditMode] = useState(true);
@@ -24,6 +42,32 @@ export function App() {
   const [deviceFrame, setDeviceFrame] = useState<string | null>(null);
   const [zoom, setZoom] = useState(85);
   const [resetCounter, setResetCounter] = useState(0);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => loadChat());
+
+  const persistChat = useCallback((next: ChatMessage[]) => {
+    setMessages(next);
+    localStorage.setItem(CHAT_KEY, JSON.stringify(next));
+  }, []);
+
+  const handleSendChat = useCallback(
+    (text: string) => {
+      const user: ChatMessage = {
+        id: `u-${Date.now()}`,
+        role: 'user',
+        content: text,
+        time: nowTime(),
+      };
+      const reply: ChatMessage = {
+        id: `a-${Date.now()}`,
+        role: 'assistant',
+        content:
+          "I'm a stub in this demo — no LLM is wired up. In your own app, swap this onSend handler for an Anthropic / OpenAI streaming call. The selection from the inspector (visual.selection) is available to send along as context.",
+        time: nowTime(),
+      };
+      persistChat([...messages, user, reply]);
+    },
+    [messages, persistChat],
+  );
 
   const loadSource = useCallback(() => {
     return localStorage.getItem(STORAGE_KEY) ?? SAMPLE_HTML;
@@ -84,9 +128,32 @@ export function App() {
 
   const handleReset = () => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(CHAT_KEY);
+    setMessages([]);
     visual.clearSelection();
     setResetCounter((n) => n + 1);
   };
+
+  const chatHeader = (
+    <div className="demo-chat-banner">
+      <div className="demo-chat-banner__title">
+        <PencilSimple size={12} weight="fill" /> Tweak mode
+        <span className="demo-chat-banner__tag">stub</span>
+      </div>
+      <p className="demo-chat-banner__hint">
+        {visual.selection
+          ? `Selected <${visual.selection.tag}> — wire onSend to your LLM to act on it.`
+          : 'Click an element in the preview, then describe a change.'}
+      </p>
+    </div>
+  );
+
+  const chatEmpty = (
+    <p>
+      No messages yet. Send something — the demo will reply with a stub. In your own app, pass your
+      own <code>onSend</code> to <code>ChatSidebar</code> to wire an LLM.
+    </p>
+  );
 
   const livePreviewHtml = useMemo(() => {
     if (editMode) return undefined;
@@ -141,6 +208,14 @@ export function App() {
       </header>
 
       <div className="demo-body">
+        <ChatSidebar
+          messages={messages}
+          onSend={handleSendChat}
+          header={chatHeader}
+          emptyState={chatEmpty}
+          placeholder="Describe a change (stub — no LLM wired up)…"
+        />
+
         <main className="demo-stage">
           <div className="demo-stage__grid" />
 

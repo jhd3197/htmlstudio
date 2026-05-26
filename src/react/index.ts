@@ -37,3 +37,10 @@ export type { EditInspectorProps, RerenderBlockArgs } from './EditInspector.js';
 
 export { RightRail } from './RightRail.js';
 export type { RightRailProps } from './RightRail.js';
+
+export { ChatSidebar, ChatInput } from './ChatSidebar.js';
+export type {
+  ChatMessage,
+  ChatSidebarProps,
+  ChatInputProps,
+} from './ChatSidebar.js';

@@ -434,6 +434,184 @@
 }
 
 /* ====================================================================== */
+/* ChatSidebar                                                             */
+/* ====================================================================== */
+
+.hs-chat {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--hs-bg);
+  border-right: 1px solid var(--hs-border);
+  overflow: hidden;
+
+  &__header {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--hs-border-soft);
+  }
+
+  &__messages {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__empty {
+    margin: auto 0;
+    padding: 24px 8px;
+    text-align: center;
+    color: var(--hs-text-muted);
+    font-size: 13px;
+    line-height: 1.6;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__msg {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    background: var(--hs-bg-elev);
+    border: 1px solid var(--hs-border-soft);
+    border-radius: var(--hs-radius-md);
+
+    &--user {
+      align-self: flex-end;
+      max-width: 90%;
+      background: var(--hs-brand-soft);
+      border-color: var(--hs-brand-ring);
+    }
+
+    &--assistant {
+      align-self: flex-start;
+      max-width: 95%;
+    }
+
+    &--system {
+      align-self: stretch;
+      background: transparent;
+      border-style: dashed;
+      border-color: var(--hs-border-strong);
+      color: var(--hs-text-muted);
+      font-style: italic;
+      font-size: 12px;
+    }
+  }
+
+  &__msg-role {
+    font-family: var(--hs-font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hs-text-muted);
+  }
+
+  &__msg-body {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--hs-text-strong);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  &__msg-time {
+    font-family: var(--hs-font-mono);
+    font-size: 10px;
+    color: var(--hs-text-dim);
+  }
+
+  &__input {
+    flex-shrink: 0;
+    padding: 12px;
+    border-top: 1px solid var(--hs-border);
+    background: var(--hs-bg-deep);
+  }
+
+  &__input-shell {
+    background: var(--hs-bg);
+    border: 1px solid var(--hs-border-strong);
+    border-radius: var(--hs-radius-md);
+    padding: 8px;
+    transition: border-color 120ms;
+
+    &:focus-within {
+      border-color: var(--hs-brand);
+      box-shadow: 0 0 0 2px var(--hs-brand-soft);
+    }
+  }
+
+  &__textarea {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    outline: none;
+    resize: none;
+    color: var(--hs-text-strong);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 4px 6px;
+    min-height: 60px;
+
+    &::placeholder {
+      color: var(--hs-text-dim);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &__input-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+    padding: 0 4px;
+  }
+
+  &__hint {
+    font-family: var(--hs-font-mono);
+    font-size: 10px;
+    color: var(--hs-text-faint);
+  }
+
+  &__send {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--hs-brand);
+    border: 0;
+    border-radius: var(--hs-radius);
+    cursor: pointer;
+    transition: background-color 120ms;
+
+    &:hover:not(:disabled) {
+      background: var(--hs-brand-hover);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* ====================================================================== */
 /* RightRail — tabs container                                              */
 /* ====================================================================== */
 
