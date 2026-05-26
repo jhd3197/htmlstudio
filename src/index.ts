@@ -21,6 +21,8 @@ export {
   renderBlockUpdate,
   readBlockConfig,
   createRegistry,
+  generateWireframe,
+  wireframeFor,
   type BlockDefinition,
   type BlockField,
   type BlockFieldOption,

@@ -5,9 +5,11 @@ import {
   BLOCK_CONFIG_ATTR,
   BLOCK_INSTANCE_ATTR,
   createRegistry,
+  generateWireframe,
   readBlockConfig,
   renderBlock,
   renderBlockUpdate,
+  wireframeFor,
   type BlockDefinition,
 } from '../src/blocks.js';
 import { BLOCK_ATTR } from '../src/types.js';
@@ -118,6 +120,36 @@ describe('BUILTIN_BLOCKS', () => {
     expect(BUILTIN_REGISTRY.list().length).toBe(BUILTIN_BLOCKS.length);
     expect(BUILTIN_REGISTRY.get('hero-split')?.name).toBe('Hero — Split');
     expect(BUILTIN_REGISTRY.get('nope')).toBeUndefined();
+  });
+});
+
+describe('wireframes (v0.4)', () => {
+  it('every builtin ships an authored wireframe SVG', () => {
+    for (const b of BUILTIN_BLOCKS) {
+      expect(b.wireframe, `${b.id} should have a wireframe`).toBeTruthy();
+      expect(b.wireframe).toContain('<svg');
+      expect(b.wireframe).toContain('viewBox');
+    }
+  });
+
+  it('wireframeFor returns the authored wireframe when present', () => {
+    const def = { template: '<div/>', wireframe: '<svg id="wf-test"/>' };
+    expect(wireframeFor(def)).toContain('wf-test');
+  });
+
+  it('wireframeFor auto-generates from template when wireframe missing', () => {
+    const def = { template: '<section><h1>x</h1><p>y</p><a href="#">z</a></section>' };
+    const svg = wireframeFor(def);
+    expect(svg).toContain('<svg');
+    expect(svg).toContain('viewBox="0 0 160 90"');
+  });
+
+  it('generateWireframe scales with content (image present)', () => {
+    const withImage = generateWireframe('<section><img src="/"/><h1>x</h1></section>');
+    const withoutImage = generateWireframe('<section><h1>x</h1></section>');
+    // image present → an image rect appears
+    expect(withImage).toContain('width="50"');
+    expect(withoutImage).not.toContain('width="50"');
   });
 });
 
