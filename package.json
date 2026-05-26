@@ -103,6 +103,14 @@
   ],
   "author": "Juan Denis",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhd3197/htmlstudio.git"
+  },
+  "homepage": "https://github.com/jhd3197/htmlstudio#readme",
+  "bugs": {
+    "url": "https://github.com/jhd3197/htmlstudio/issues"
+  },
   "engines": {
     "node": ">=18"
   }
