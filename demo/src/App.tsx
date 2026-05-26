@@ -43,6 +43,7 @@ export function App() {
   const [zoom, setZoom] = useState(85);
   const [resetCounter, setResetCounter] = useState(0);
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadChat());
+  const [chatMode, setChatMode] = useState<'tweak' | 'rebuild'>('tweak');
 
   const persistChat = useCallback((next: ChatMessage[]) => {
     setMessages(next);
@@ -57,16 +58,19 @@ export function App() {
         content: text,
         time: nowTime(),
       };
+      const replyBody =
+        chatMode === 'tweak'
+          ? `Tweak mode would emit a Patch here — e.g. { kind: "set-text", id: "${visual.selection?.id ?? '<select an element>'}", value: "..." } — and the host applies it via htmlstudio's applyPatch. Wire onSend to your LLM to produce that JSON.`
+          : `Re-build mode would call your generation pipeline (e.g. AgentSite's PM → Designer → Developer) to produce a new full HTML source, then apply it with { kind: "set-full-source", source: "<!doctype html>..." }.`;
       const reply: ChatMessage = {
         id: `a-${Date.now()}`,
         role: 'assistant',
-        content:
-          "I'm a stub in this demo — no LLM is wired up. In your own app, swap this onSend handler for an Anthropic / OpenAI streaming call. The selection from the inspector (visual.selection) is available to send along as context.",
+        content: replyBody,
         time: nowTime(),
       };
       persistChat([...messages, user, reply]);
     },
-    [messages, persistChat],
+    [messages, persistChat, chatMode, visual.selection],
   );
 
   const loadSource = useCallback(() => {
@@ -135,23 +139,33 @@ export function App() {
   };
 
   const chatHeader = (
-    <div className="demo-chat-banner">
-      <div className="demo-chat-banner__title">
-        <PencilSimple size={12} weight="fill" /> Tweak mode
-        <span className="demo-chat-banner__tag">stub</span>
-      </div>
-      <p className="demo-chat-banner__hint">
-        {visual.selection
-          ? `Selected <${visual.selection.tag}> — wire onSend to your LLM to act on it.`
-          : 'Click an element in the preview, then describe a change.'}
-      </p>
+    <div className="demo-chat-modes" role="tablist" aria-label="Chat mode">
+      <button
+        type="button"
+        role="tab"
+        aria-selected={chatMode === 'tweak'}
+        onClick={() => setChatMode('tweak')}
+        className={`demo-chat-mode ${chatMode === 'tweak' ? 'demo-chat-mode--active' : ''}`}
+      >
+        Tweak
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={chatMode === 'rebuild'}
+        onClick={() => setChatMode('rebuild')}
+        className={`demo-chat-mode ${chatMode === 'rebuild' ? 'demo-chat-mode--active' : ''}`}
+      >
+        Re-build
+      </button>
     </div>
   );
 
   const chatEmpty = (
     <p>
-      No messages yet. Send something — the demo will reply with a stub. In your own app, pass your
-      own <code>onSend</code> to <code>ChatSidebar</code> to wire an LLM.
+      {chatMode === 'tweak'
+        ? 'Select an element, then describe a change. The host turns the message + selection into a Patch.'
+        : 'Describe a new page. The host calls your generation pipeline and applies a set-full-source patch.'}
     </p>
   );
 
@@ -213,7 +227,11 @@ export function App() {
           onSend={handleSendChat}
           header={chatHeader}
           emptyState={chatEmpty}
-          placeholder="Describe a change (stub — no LLM wired up)…"
+          placeholder={
+            chatMode === 'tweak'
+              ? 'Describe a change to the selected element…'
+              : 'Describe the page you want to build…'
+          }
         />
 
         <main className="demo-stage">
