@@ -1,0 +1,11 @@
+name: Sanity
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "hello from $GITHUB_REPOSITORY @ $GITHUB_SHA"
