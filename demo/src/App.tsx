@@ -56,6 +56,23 @@ export function App() {
     localStorage.setItem(CHAT_KEY, JSON.stringify(next));
   }, []);
 
+  const loadSource = useCallback(() => {
+    return localStorage.getItem(STORAGE_KEY) ?? SAMPLE_HTML;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetCounter]);
+
+  const saveSource = useCallback((html: string) => {
+    localStorage.setItem(STORAGE_KEY, html);
+  }, []);
+
+  const visual = useVisualEdit({
+    loadSource,
+    saveSource,
+    enabled: editMode,
+    key: `reset:${resetCounter}:edit:${editMode}`,
+    saveDebounceMs: 400,
+  });
+
   const handleSendChat = useCallback(
     (text: string) => {
       const user: ChatMessage = {
@@ -90,23 +107,6 @@ export function App() {
     },
     [messages, persistChat, chatMode, visual.selection],
   );
-
-  const loadSource = useCallback(() => {
-    return localStorage.getItem(STORAGE_KEY) ?? SAMPLE_HTML;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resetCounter]);
-
-  const saveSource = useCallback((html: string) => {
-    localStorage.setItem(STORAGE_KEY, html);
-  }, []);
-
-  const visual = useVisualEdit({
-    loadSource,
-    saveSource,
-    enabled: editMode,
-    key: `reset:${resetCounter}:edit:${editMode}`,
-    saveDebounceMs: 400,
-  });
 
   const handleInsert = useCallback(
     (def: BlockDefinition) => {
