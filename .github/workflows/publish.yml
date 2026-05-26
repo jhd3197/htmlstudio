@@ -3,7 +3,7 @@ name: Publish to npm and GitHub Release
 on:
   push:
     branches:
-      - master
+      - main
 
 permissions:
   contents: write
@@ -29,7 +29,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_branches: master
+          release_branches: main
           default_bump: patch
           tag_prefix: 'v'
 
@@ -47,7 +47,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json package-lock.json 2>/dev/null || git add package.json
           git commit -m "🔖 Version v${{ steps.bump_version.outputs.new_version }} [skip ci]" || true
-          git push origin master || true
+          git push origin main || true
 
       - name: Fetch Latest Pull Request Info
         id: fetch_pr
@@ -58,7 +58,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'closed',
-              base: 'master',
+              base: 'main',
               head: 'dev',
               sort: 'updated',
               direction: 'desc',
