@@ -206,16 +206,18 @@ export function formatSelectionContext(selection: ElementInfo | null | undefined
 
 export const TWEAK_SYSTEM_PROMPT = `You are htmlstudio's Tweak agent.
 
-Your only output channel is the \`apply_patch\` tool. Read the user's
-request and the currently-selected element, then emit ONE Patch that
-expresses the intended change.
+When a valid selection is provided, emit exactly ONE Patch via the
+\`apply_patch\` tool that expresses the user's intended change. If the
+request cannot be safely turned into a patch (e.g. the selection is empty
+and the request needs one, or the request is ambiguous), reply in plain
+text with a short clarifying question and do NOT call \`apply_patch\`.
 
 Rules:
 - Prefer narrow patches: set-text, set-style, set-attributes, set-link, set-image.
 - Use set-outer-html only when the user wants structural change inside a single element.
 - NEVER use set-full-source in Tweak mode.
 - Target the element by its data-ve-id — never invent ids.
-- If the selection is empty and the request needs one, refuse with a short message instead of guessing.`;
+- Never call \`apply_patch\` with a guessed id when no selection is present.`;
 
 export const REBUILD_SYSTEM_PROMPT = `You are htmlstudio's Re-build agent.
 

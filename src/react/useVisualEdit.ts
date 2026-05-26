@@ -1,8 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type MutableRefObject } from 'react';
 import { tagHtml, untagHtml } from '../tagger.js';
 import { applyPatch, applyPatches } from '../patches.js';
 import { injectBridge } from '../bridge.js';
 import type { Patch, ElementInfo } from '../types.js';
+
+function escapeAttr(v: string): string {
+  return v
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
 export interface UseVisualEditOptions {
   /** Returns the raw HTML to edit. Called once per `key` change. */
@@ -45,7 +53,7 @@ export interface VisualEdit {
   getTaggedSource: () => string | null;
   ready: boolean;
   saveState: SaveState;
-  previewFrameRef: React.MutableRefObject<HTMLIFrameElement | null>;
+  previewFrameRef: MutableRefObject<HTMLIFrameElement | null>;
 }
 
 /**
@@ -78,11 +86,12 @@ export function useVisualEdit({
 
   const buildSrcDoc = useCallback(
     (tagged: string): string => {
+      const safeHref = baseHref ? escapeAttr(baseHref) : '';
       const wrapped =
         baseHref && /<head[^>]*>/i.test(tagged)
-          ? tagged.replace(/<head([^>]*)>/i, `<head$1><base href="${baseHref}">`)
+          ? tagged.replace(/<head([^>]*)>/i, `<head$1><base href="${safeHref}">`)
           : baseHref
-            ? `<!doctype html><html><head><base href="${baseHref}"></head><body>${tagged}</body></html>`
+            ? `<!doctype html><html><head><base href="${safeHref}"></head><body>${tagged}</body></html>`
             : /<html/i.test(tagged)
               ? tagged
               : `<!doctype html><html><body>${tagged}</body></html>`;
@@ -142,6 +151,22 @@ export function useVisualEdit({
     [saveSource, saveDebounceMs],
   );
 
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
+        saveTimer.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!enabled && saveTimer.current) {
+      clearTimeout(saveTimer.current);
+      saveTimer.current = null;
+    }
+  }, [enabled]);
+
   const applyAndPersist = useCallback(
     (patch: Patch) => {
       setTaggedSource((current) => {
@@ -182,6 +207,9 @@ export function useVisualEdit({
   useEffect(() => {
     if (!enabled) return undefined;
     const onMessage = (e: MessageEvent) => {
+      const frameWin = previewFrameRef.current?.contentWindow;
+      if (frameWin && e.source !== frameWin) return;
+      if (targetOrigin !== '*' && e.origin && e.origin !== targetOrigin) return;
       const msg = e.data as { channel?: string; type?: string; payload?: unknown } | undefined;
       if (!msg || msg.channel !== 've') return;
       if (msg.type === 'select') {
@@ -198,7 +226,7 @@ export function useVisualEdit({
     };
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
-  }, [enabled, applyAndPersist]);
+  }, [enabled, applyAndPersist, targetOrigin]);
 
   const getOuterHtml = useCallback(
     (id: string): string | null => {
@@ -222,10 +250,10 @@ export function useVisualEdit({
     if (previewFrameRef.current?.contentWindow) {
       previewFrameRef.current.contentWindow.postMessage(
         { channel: 've', type: 'clear' },
-        '*',
+        targetOrigin,
       );
     }
-  }, []);
+  }, [targetOrigin]);
 
   return {
     srcDoc,

@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import {
   Desktop,
   DeviceTablet,
@@ -35,13 +36,13 @@ const DEFAULT_FRAMES: DeviceOption[] = [
   { key: 'macbook', label: 'MacBook', width: '1440px', frame: 'macbook' },
 ];
 
-const DEVICE_ICONS: Record<string, React.ComponentType<{ size: number }>> = {
+const DEVICE_ICONS: Record<string, ComponentType<{ size: number }>> = {
   desktop: Desktop,
   tablet: DeviceTablet,
   mobile: DeviceMobile,
 };
 
-const FRAME_ICONS: Record<string, React.ComponentType<{ size: number; weight?: 'fill' }>> = {
+const FRAME_ICONS: Record<string, ComponentType<{ size: number; weight?: 'fill' }>> = {
   iphone: AppleLogo,
   android: AndroidLogo,
   ipad: DeviceMobileCamera,
@@ -62,8 +63,10 @@ export function DeviceSwitcher({
         return (
           <button
             key={key}
+            type="button"
             onClick={() => onChange(width, frame)}
             title={label}
+            aria-label={label}
             className={`hs-device-btn ${isActive ? 'hs-device-btn--active' : ''}`}
           >
             <Icon size={16} />
@@ -77,8 +80,10 @@ export function DeviceSwitcher({
         return (
           <button
             key={key}
+            type="button"
             onClick={() => onChange(width, frame)}
             title={`${label} (frame)`}
+            aria-label={`${label} (frame)`}
             className={`hs-device-btn ${isActive ? 'hs-device-btn--active' : ''}`}
           >
             <Icon size={16} weight="fill" />

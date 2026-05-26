@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import type { BlockDefinition, BlockField } from '../blocks.js';
 
 export interface BlockConfigFormProps {
@@ -49,8 +49,9 @@ function FieldRow({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const inputId = useId();
   const label = (
-    <label className="hs-label">
+    <label className="hs-label" htmlFor={inputId}>
       {field.label}
       {field.optional && <span className="hs-label__optional">(optional)</span>}
     </label>
@@ -62,6 +63,7 @@ function FieldRow({
         <div className="hs-block-config__field">
           {label}
           <textarea
+            id={inputId}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             rows={3}
@@ -76,6 +78,7 @@ function FieldRow({
           {label}
           <div className="hs-block-config__color">
             <input
+              id={inputId}
               type="color"
               value={normalizeHex(value)}
               onChange={(e) => onChange(e.target.value)}
@@ -86,6 +89,7 @@ function FieldRow({
               onChange={(e) => onChange(e.target.value)}
               className="hs-input"
               placeholder="#000000"
+              aria-label={`${field.label} hex value`}
             />
           </div>
         </div>
@@ -96,6 +100,7 @@ function FieldRow({
         <div className="hs-block-config__field">
           {label}
           <input
+            id={inputId}
             type="url"
             value={value}
             onChange={(e) => onChange(e.target.value)}
@@ -109,6 +114,7 @@ function FieldRow({
         <div className="hs-block-config__field">
           {label}
           <input
+            id={inputId}
             type="number"
             value={value}
             onChange={(e) => onChange(e.target.value)}
@@ -118,9 +124,10 @@ function FieldRow({
       );
     case 'boolean':
       return (
-        <label className="hs-block-config__boolean">
+        <label className="hs-block-config__boolean" htmlFor={inputId}>
           <span className="hs-label" style={{ margin: 0 }}>{field.label}</span>
           <input
+            id={inputId}
             type="checkbox"
             checked={value === 'true'}
             onChange={(e) => onChange(e.target.checked ? 'true' : 'false')}
@@ -132,6 +139,7 @@ function FieldRow({
         <div className="hs-block-config__field">
           {label}
           <select
+            id={inputId}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="hs-select"
@@ -148,6 +156,7 @@ function FieldRow({
         <div className="hs-block-config__field">
           {label}
           <input
+            id={inputId}
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}

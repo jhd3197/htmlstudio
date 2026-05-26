@@ -12,7 +12,7 @@ import {
   Code,
   PuzzlePiece,
 } from '@phosphor-icons/react';
-import { getBlock as defaultGetBlock, type BlockDefinition } from '../blocks.js';
+import { getBlock as defaultGetBlock, decodeConfig, type BlockDefinition } from '../blocks.js';
 import type { ElementInfo, Patch } from '../types.js';
 import { BlockConfigForm } from './BlockConfigForm.js';
 import type { SaveState } from './useVisualEdit.js';
@@ -100,16 +100,12 @@ export function EditInspector({
     if (!blockId) return null;
     const raw = selection?.attributes?.['data-ve-config'];
     if (!raw) return {};
-    try {
-      const json = typeof atob === 'function' ? atob(raw) : '';
-      return JSON.parse(json);
-    } catch {
-      return {};
-    }
+    return decodeConfig(raw);
   }, [blockId, selection]);
 
   const [content, setContent] = useState({ text: '', href: '', linkLabel: '', src: '', alt: '' });
   const [open, setOpen] = useState({
+    block: true,
     content: true,
     type: true,
     layout: true,
@@ -221,7 +217,12 @@ export function EditInspector({
         )}
 
         {blockDef && blockInstance && selection && (
-          <Section icon={<PuzzlePiece size={14} />} label={`Block — ${blockDef.name}`} open onToggle={() => {}}>
+          <Section
+            icon={<PuzzlePiece size={14} />}
+            label={`Block — ${blockDef.name}`}
+            open={open.block}
+            onToggle={() => toggle('block')}
+          >
             <p className="hs-section__intro">{blockDef.description}</p>
             <BlockConfigForm
               definition={blockDef}

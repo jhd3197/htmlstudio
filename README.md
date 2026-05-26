@@ -106,9 +106,10 @@ type Patch =
 
 ## React UI (optional)
 
-The package ships drop-in React components under `htmlstudio/react` — the same surface AgentSite uses internally. Peer deps: `react`, `react-dom`, `@phosphor-icons/react`. Tailwind 4 with a `brand-*` color scale is expected (see `demo/src/index.css` for the `@theme` snippet).
+The package ships drop-in React components under `htmlstudio/react` — the same surface AgentSite uses internally. Peer deps: `react`, `react-dom`, `@phosphor-icons/react`. Styling is built-in: import `htmlstudio/styles.css` once at the app root. The components use `hs-*` classes plus CSS variables, so Tailwind is **not** required — override the variables in your own CSS to theme.
 
 ```tsx
+import 'htmlstudio/styles.css';
 import { useVisualEdit, PreviewFrame, RightRail } from 'htmlstudio/react';
 import { BUILTIN_BLOCKS, renderBlock } from 'htmlstudio';
 
@@ -186,7 +187,7 @@ npm run dev           # tsc --watch
 - Undo/redo stack helper.
 - Style-token patches (`set-token`) for design-system-aware editing.
 - AI tool-call adapter (`patchToToolCall` / `toolCallToPatch`).
-- Precompiled `htmlstudio/styles.css` so the React components work without a Tailwind setup.
+- Optional shipped device-frame SVGs (currently `DEFAULT_FRAMES` is empty — callers provide their own `frames` prop).
 
 ## License
 

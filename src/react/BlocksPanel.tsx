@@ -2,6 +2,20 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { MagnifyingGlass } from '@phosphor-icons/react';
 import { BUILTIN_BLOCKS, wireframeFor, type BlockDefinition } from '../blocks.js';
 
+// Wireframes are rendered via dangerouslySetInnerHTML, so block definitions
+// coming from `projectComponents` (host-provided) are the trust boundary.
+// We accept only inline SVG, reject any document containing a <script> tag
+// or javascript: handlers. Falls back to an empty string on rejection.
+function safeWireframe(svg: string): string {
+  if (typeof svg !== 'string') return '';
+  const trimmed = svg.trim();
+  if (!trimmed.toLowerCase().startsWith('<svg')) return '';
+  if (/<script\b/i.test(trimmed)) return '';
+  if (/\son[a-z]+\s*=/i.test(trimmed)) return '';
+  if (/javascript:/i.test(trimmed)) return '';
+  return trimmed;
+}
+
 export interface ProjectBlockMeta extends BlockDefinition {
   __project?: boolean;
 }
@@ -115,7 +129,7 @@ export function BlocksPanel({
               <div
                 className="hs-block-card__wire"
                 aria-hidden="true"
-                dangerouslySetInnerHTML={{ __html: wireframeFor(b) }}
+                dangerouslySetInnerHTML={{ __html: safeWireframe(wireframeFor(b)) }}
               />
               <div className="hs-block-card__row">
                 <h3 className="hs-block-card__name">{b.name}</h3>

@@ -2,9 +2,9 @@
  * htmlstudio/react — drop-in React components for the visual editor surface.
  *
  * Peer deps: react, react-dom, @phosphor-icons/react.
- * Styling: Tailwind CSS with a `brand-*` color scale (e.g. `brand-500`).
- * If your project doesn't use Tailwind, import `htmlstudio/styles.css`
- * (precompiled) once at the app root.
+ * Styling: import `htmlstudio/styles.css` once at the app root — the
+ * components ship with `hs-*` classes and CSS variables, no Tailwind setup
+ * required. Override individual tokens in your own CSS to theme.
  */
 export { useVisualEdit } from './useVisualEdit.js';
 export type {

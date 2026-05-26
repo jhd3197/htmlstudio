@@ -257,7 +257,14 @@ export function App() {
 
           <div
             className="demo-stage__viewport"
-            style={{ zoom: `${zoom}%` } as CSSProperties}
+            style={
+              {
+                transform: `scale(${zoom / 100})`,
+                transformOrigin: 'top center',
+                width: `${(100 / zoom) * 100}%`,
+                height: `${(100 / zoom) * 100}%`,
+              } as CSSProperties
+            }
           >
             <PreviewFrame
               html={livePreviewHtml}

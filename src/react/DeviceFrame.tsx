@@ -6,28 +6,11 @@ export interface FrameDef {
   screen: { x: number; y: number; w: number; h: number };
 }
 
-export const DEFAULT_FRAMES: Record<string, FrameDef> = {
-  iphone: {
-    src: '/frames/iphone-15-pro.svg',
-    viewBox: { w: 390, h: 844 },
-    screen: { x: 14, y: 14, w: 362, h: 816 },
-  },
-  android: {
-    src: '/frames/android-pixel.svg',
-    viewBox: { w: 412, h: 900 },
-    screen: { x: 14, y: 14, w: 384, h: 872 },
-  },
-  ipad: {
-    src: '/frames/ipad-pro.svg',
-    viewBox: { w: 834, h: 1194 },
-    screen: { x: 28, y: 28, w: 778, h: 1138 },
-  },
-  macbook: {
-    src: '/frames/macbook.svg',
-    viewBox: { w: 1440, h: 940 },
-    screen: { x: 60, y: 40, w: 1320, h: 800 },
-  },
-};
+// The library does not ship frame SVG assets — DEFAULT_FRAMES is empty.
+// Callers that want device frames must pass their own `frames` prop with
+// `src` pointing at assets they ship themselves. The viewBox/screen geometry
+// for the common devices is documented in the README.
+export const DEFAULT_FRAMES: Record<string, FrameDef> = {};
 
 export interface DeviceFrameProps {
   frame: string | null | undefined;

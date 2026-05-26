@@ -101,7 +101,7 @@ function encodeConfig(config: Record<string, unknown>): string {
   return Buffer.from(json, 'utf8').toString('base64');
 }
 
-function decodeConfig(raw: string): Record<string, unknown> {
+export function decodeConfig(raw: string): Record<string, unknown> {
   try {
     const json = typeof atob === 'function'
       ? decodeURIComponent(escape(atob(raw)))
