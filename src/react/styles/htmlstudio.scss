@@ -909,6 +909,7 @@
   &__body {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
   }
 
   &__multi-note {
@@ -987,7 +988,7 @@
 
 .hs-row {
   display: grid;
-  grid-template-columns: 92px 1fr;
+  grid-template-columns: 92px minmax(0, 1fr);
   align-items: center;
   gap: 8px;
 }
@@ -1099,6 +1100,8 @@
 }
 
 .hs-box {
+  min-width: 0;
+
   &__head {
     display: flex;
     align-items: center;
@@ -1118,7 +1121,7 @@
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
   }
 

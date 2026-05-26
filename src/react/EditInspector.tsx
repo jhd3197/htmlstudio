@@ -584,10 +584,13 @@ function UnitInput({
   value,
   onChange,
   defaultUnit = 'px',
+  compact = false,
 }: {
   value: string | undefined | null;
   onChange: (v: string) => void;
   defaultUnit?: string;
+  /** Hide the unit dropdown — assumes the defaultUnit. Used in tight grids. */
+  compact?: boolean;
 }) {
   const { n, u } = splitUnit(value);
   const unit = u || defaultUnit;
@@ -599,6 +602,18 @@ function UnitInput({
     if (n === '' || n == null) return onChange('');
     onChange(`${n}${newU}`);
   };
+  if (compact) {
+    return (
+      <input
+        type="number"
+        value={n}
+        onChange={(e) => setNum(e.target.value)}
+        className="hs-input"
+        placeholder="0"
+        title={`${unit}`}
+      />
+    );
+  }
   return (
     <div className="hs-unit">
       <input
@@ -744,6 +759,7 @@ function BoxField({
         {sides.map((s) => (
           <div key={s}>
             <UnitInput
+              compact
               value={styles[`${prefix}-${s}`] || ''}
               onChange={(v) =>
                 v ? setStyle(`${prefix}-${s}`, v) : clearStyle(`${prefix}-${s}`)
