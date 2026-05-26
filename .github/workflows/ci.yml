@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [master, dev]
+    branches: [main, dev]
   pull_request:
 
 jobs:
@@ -17,6 +17,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-      - run: npm ci
+      # The committed lockfile is generated on Windows and pins win32-only
+      # rollup optional deps. Even `npm install` respects those entries, so
+      # we delete the lockfile to force a fresh resolve on the Linux runner
+      # — exactly what the npm bug's own error message recommends. See
+      # https://github.com/npm/cli/issues/4828.
+      - run: rm -f package-lock.json
+      - run: npm install --no-audit --no-fund
       - run: npm run build
       - run: npm test

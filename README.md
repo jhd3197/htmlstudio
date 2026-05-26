@@ -1,9 +1,12 @@
 # htmlstudio
 
-> HTML-source-of-truth visual editor primitives. Built to power [AgentSite](https://github.com/jhd3197/AgentSite) — the "edit after the agent ships it" layer for AI-generated websites.
+> HTML-source-of-truth visual editor primitives + React UI. Built to power [AgentSite](https://github.com/jhd3197/AgentSite) — the "edit after the agent ships it" layer for AI-generated websites.
 
+[![npm](https://img.shields.io/npm/v/htmlstudio.svg?color=cb3837&logo=npm)](https://www.npmjs.com/package/htmlstudio)
 [![CI](https://github.com/jhd3197/htmlstudio/actions/workflows/ci.yml/badge.svg)](https://github.com/jhd3197/htmlstudio/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+**[Live demo →](https://jhd3197.github.io/htmlstudio/)**
 
 ## Why
 
@@ -101,16 +104,66 @@ type Patch =
   | { kind: 'set-full-source'; source: string };
 ```
 
+## React UI (optional)
+
+The package ships drop-in React components under `htmlstudio/react` — the same surface AgentSite uses internally. Peer deps: `react`, `react-dom`, `@phosphor-icons/react`. Styling is built-in: import `htmlstudio/styles.css` once at the app root. The components use `hs-*` classes plus CSS variables, so Tailwind is **not** required — override the variables in your own CSS to theme.
+
+```tsx
+import 'htmlstudio/styles.css';
+import { useVisualEdit, PreviewFrame, RightRail } from 'htmlstudio/react';
+import { BUILTIN_BLOCKS, renderBlock } from 'htmlstudio';
+
+function Editor({ html, onSave }) {
+  const visual = useVisualEdit({
+    loadSource: () => html,
+    saveSource: onSave,
+    enabled: true,
+  });
+
+  return (
+    <div className="flex h-screen">
+      <main className="flex-1">
+        <PreviewFrame
+          editSrcDoc={visual.srcDoc}
+          iframeRef={visual.previewFrameRef}
+        />
+      </main>
+      <RightRail
+        selection={visual.selection}
+        selections={visual.selections}
+        onApply={visual.applyPatch}
+        onApplyMany={visual.applyPatches}
+        onClearSelection={visual.clearSelection}
+        saveState={visual.saveState}
+        blocks={BUILTIN_BLOCKS}
+        onInsert={(def) =>
+          visual.selection &&
+          visual.applyPatch({
+            kind: 'set-outer-html',
+            id: visual.selection.id,
+            html: renderBlock(def, {}),
+          })
+        }
+      />
+    </div>
+  );
+}
+```
+
+Exports: `useVisualEdit`, `PreviewFrame`, `DeviceFrame`, `DeviceSwitcher`, `ZoomControls`, `BlocksPanel`, `BlockConfigForm`, `EditInspector`, `RightRail`.
+
 ## Demo
+
+A Vite + React + Tailwind editor that loads a sample page and persists edits to `localStorage`:
 
 ```bash
 npm install
-npm run build
-npm run demo
-# → http://127.0.0.1:5180
+npm run build       # builds htmlstudio
+npm run demo:install
+npm run demo        # → http://127.0.0.1:5180
 ```
 
-Two-pane host: live iframe preview on the left, inspector + event log on the right. Click any element, double-click text to edit inline, or tweak fields in the inspector.
+Or browse the hosted version: **<https://jhd3197.github.io/htmlstudio/>**.
 
 ## Develop
 
@@ -131,11 +184,10 @@ npm run dev           # tsc --watch
 
 ## Roadmap
 
-- `htmlstudio-react` — `<HtmlStudio source onChange />` + inspector components.
-- Block/component registry via `data-ve-block="hero"`.
 - Undo/redo stack helper.
 - Style-token patches (`set-token`) for design-system-aware editing.
 - AI tool-call adapter (`patchToToolCall` / `toolCallToPatch`).
+- Optional shipped device-frame SVGs (currently `DEFAULT_FRAMES` is empty — callers provide their own `frames` prop).
 
 ## License
 

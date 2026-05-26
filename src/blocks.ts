@@ -101,7 +101,7 @@ function encodeConfig(config: Record<string, unknown>): string {
   return Buffer.from(json, 'utf8').toString('base64');
 }
 
-function decodeConfig(raw: string): Record<string, unknown> {
+export function decodeConfig(raw: string): Record<string, unknown> {
   try {
     const json = typeof atob === 'function'
       ? decodeURIComponent(escape(atob(raw)))
@@ -198,6 +198,16 @@ export function createRegistry(defs: BlockDefinition[]): BlockRegistry {
     list: () => Array.from(map.values()),
     get: (id) => map.get(id),
   };
+}
+
+/** Look up a built-in block by id. Returns undefined when not found. */
+export function getBlock(id: string): BlockDefinition | undefined {
+  return BUILTIN_REGISTRY.get(id);
+}
+
+/** List all built-in blocks. */
+export function listBlocks(): BlockDefinition[] {
+  return BUILTIN_BLOCKS;
 }
 
 /* ----------------------------- starter blocks ------------------------ */

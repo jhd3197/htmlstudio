@@ -17,7 +17,11 @@ jobs:
         with:
           node-version: '20.x'
           cache: npm
-      - run: npm ci
+      # Windows-generated lockfile pins win32-only rollup deps;
+      # delete it so npm resolves the Linux binary fresh on this runner.
+      # https://github.com/npm/cli/issues/4828
+      - run: rm -f package-lock.json
+      - run: npm install --no-audit --no-fund
       - run: npm run build
       - run: npm test
 
@@ -88,7 +92,10 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        # Same lockfile-platform-mismatch fix as the test job.
+        run: |
+          rm -f package-lock.json
+          npm install --no-audit --no-fund
 
       - name: Set dev version in package.json
         run: npm version ${{ steps.ver.outputs.new }} --no-git-tag-version --allow-same-version
