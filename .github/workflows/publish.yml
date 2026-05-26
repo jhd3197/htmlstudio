@@ -94,7 +94,9 @@ jobs:
           prerelease: false
 
       - name: Install dependencies
-        run: npm ci
+        # `npm install`, not `npm ci` — Windows-generated lockfile omits
+        # the Linux rollup binary. See https://github.com/npm/cli/issues/4828.
+        run: npm install --no-audit --no-fund
 
       - name: Build
         run: npm run build

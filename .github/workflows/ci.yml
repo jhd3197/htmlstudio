@@ -17,6 +17,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-      - run: npm ci
+      # `npm install` rather than `npm ci`: the committed lockfile is
+      # generated on Windows and only lists Windows-platform rollup binaries
+      # as optional deps. `npm ci` strictly follows the lockfile and won't
+      # fetch the Linux binary the runner actually needs. See
+      # https://github.com/npm/cli/issues/4828.
+      - run: npm install --no-audit --no-fund
       - run: npm run build
       - run: npm test

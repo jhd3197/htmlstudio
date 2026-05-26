@@ -26,13 +26,15 @@ jobs:
           cache: npm
 
       - name: Install (root)
-        run: npm ci
+        # `npm install`, not `npm ci` — Windows-generated lockfile omits
+        # the Linux rollup binary. See https://github.com/npm/cli/issues/4828.
+        run: npm install --no-audit --no-fund
 
       - name: Build htmlstudio
         run: npm run build
 
       - name: Install (demo)
-        run: npm --prefix demo install
+        run: npm --prefix demo install --no-audit --no-fund
 
       - name: Build demo
         env:
